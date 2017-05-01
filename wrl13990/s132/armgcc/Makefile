@@ -48,16 +48,14 @@ $(abspath ../../../../../../components/libraries/fstorage/fstorage.c) \
 $(abspath ../../../../../../components/libraries/util/nrf_assert.c) \
 $(abspath ../../../../../../components/libraries/util/nrf_log.c) \
 $(abspath ../../../../../../components/libraries/uart/retarget.c) \
-$(abspath ../../../../../../components/libraries/sensorsim/sensorsim.c) \
-$(abspath ../../../../../../components/libraries/uart/app_uart_fifo.c) \
 $(abspath ../../../../../../components/drivers_nrf/delay/nrf_delay.c) \
 $(abspath ../../../../../../components/drivers_nrf/common/nrf_drv_common.c) \
 $(abspath ../../../../../../components/drivers_nrf/gpiote/nrf_drv_gpiote.c) \
-$(abspath ../../../../../../components/drivers_nrf/uart/nrf_drv_uart.c) \
 $(abspath ../../../../../../components/drivers_nrf/pstorage/pstorage.c) \
 $(abspath ../../../../../bsp/bsp.c) \
 $(abspath ../../../../../bsp/bsp_btn_ble.c) \
 $(abspath ../../../main.c) \
+$(abspath ../../../dht22.c) \
 $(abspath ../../../../../../external/segger_rtt/RTT_Syscalls_GCC.c) \
 $(abspath ../../../../../../external/segger_rtt/SEGGER_RTT.c) \
 $(abspath ../../../../../../external/segger_rtt/SEGGER_RTT_printf.c) \
@@ -76,7 +74,7 @@ $(abspath ../../../../../../components/softdevice/common/softdevice_handler/soft
 ASM_SOURCE_FILES  = $(abspath ../../../../../../components/toolchain/gcc/gcc_startup_nrf52.s)
 
 #includes common to all targets
-INC_PATHS  = -I$(abspath ../../../config/ble_app_bps_s132_pca10040)
+INC_PATHS  = -I$(abspath ../../../config/dfu_dual_bank_serial_s132_pca10040)
 INC_PATHS += -I$(abspath ../../../config)
 INC_PATHS += -I$(abspath ../../../../../../components/drivers_nrf/config)
 INC_PATHS += -I$(abspath ../../../../../../components/libraries/timer)
@@ -86,6 +84,7 @@ INC_PATHS += -I$(abspath ../../../../../../components/drivers_nrf/delay)
 INC_PATHS += -I$(abspath ../../../../../../components/softdevice/s132/headers/nrf52)
 INC_PATHS += -I$(abspath ../../../../../../components/libraries/util)
 INC_PATHS += -I$(abspath ../../../../../../components/ble/device_manager)
+INC_PATHS += -I$(abspath ../../../../../../components/ble/device_manager/config)
 INC_PATHS += -I$(abspath ../../../../../../components/drivers_nrf/uart)
 INC_PATHS += -I$(abspath ../../../../../../components/ble/common)
 INC_PATHS += -I$(abspath ../../../../../../components/libraries/sensorsim)

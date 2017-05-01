@@ -36,7 +36,7 @@
 #endif
 
 /* GPIOTE */
-#define GPIOTE_ENABLED 0
+#define GPIOTE_ENABLED 1
 
 #if (GPIOTE_ENABLED == 1)
 #define GPIOTE_CONFIG_USE_SWI_EGU false
