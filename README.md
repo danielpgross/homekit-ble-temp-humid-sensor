@@ -1,0 +1,2 @@
+# homekit-ble-temp-humid-sensor
+This project provides code to build a wireless temperature/humidity sensor using Bluetooth Low-Energy (BLE) and Apple HomeKit. The full details of the project can be found in [the corresponding blog post](https://dgross.ca/blog/ble-homekit-sensor-pt1).
