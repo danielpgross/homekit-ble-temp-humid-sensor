@@ -1,3 +1,8 @@
+/**
+ * Copyright Gabor Paller.
+ * Code taken from http://mylifewithandroid.blogspot.ca/2016/02/thermometer-application-with-nrf51822.html
+ */
+
 #include	"dht22.h"
 #include	<nrf_delay.h>
 

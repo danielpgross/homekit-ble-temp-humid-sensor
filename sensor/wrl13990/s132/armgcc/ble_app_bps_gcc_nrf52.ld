@@ -1,3 +1,8 @@
+/**
+ * Used under the LGPL license from the https://github.com/sandeepmistry/arduino-nRF5 project
+ * Source: https://github.com/sandeepmistry/arduino-nRF5/blob/master/cores/nRF5/SDK/components/softdevice/s132/toolchain/armgcc/armgcc_s132_nrf52832_xxaa.ld
+ */
+
 /* Linker script to configure memory regions. */
 
 SEARCH_DIR(.)

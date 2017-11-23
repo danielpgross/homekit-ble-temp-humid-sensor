@@ -9,15 +9,16 @@
  * the file.
  *
  */
+/**
+ * Adapted by Daniel Gross from the ble_app_bps example in the nRF5 SDK.
+ */
 
 /** @file
  *
  * @defgroup ble_sdk_app_beacon_main main.c
  * @{
  * @ingroup ble_sdk_app_beacon
- * @brief Beacon Transmitter Sample Application main file.
- *
- * This file contains the source code for an Beacon transmitter sample application.
+ * @brief Temperature/humidity sensor main file.
  */
 
 #include <stdbool.h>
@@ -141,20 +142,6 @@ static void gap_params_init(void)
     APP_ERROR_CHECK(err_code);
 }
 
-int8_t temperature_data_get(void)
-{
-	int8_t temp;
-    temp = 25;
-    return temp;
-}
-
-uint8_t humidity_data_get(void)
-{
-	uint8_t humidity;
-    humidity = 50;
-    return humidity;
-}
-
 /**@brief Function for starting advertising.
  */
 static void advertising_start(void)
@@ -261,10 +248,6 @@ static void timers_start(void)
  */
 int main(void)
 {
-    //uint32_t err_code;
-    // Initialize.
-    //err_code = bsp_init(BSP_INIT_LED, APP_TIMER_TICKS(100, APP_TIMER_PRESCALER), NULL);
-    //APP_ERROR_CHECK(err_code);
     ble_stack_init();
     gap_params_init();
     timers_init();
