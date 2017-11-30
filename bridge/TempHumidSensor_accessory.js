@@ -1,6 +1,9 @@
-import noble from 'noble';
-import _ from 'lodash';
-import { Accessory, Service, Characteristic, uuid } from 'hap-nodejs';
+var Accessory = require('../').Accessory;
+var Service = require('../').Service;
+var Characteristic = require('../').Characteristic;
+var uuid = require('../').uuid;
+
+var noble = require('noble');
 
 // Global
 let sensorVals = {
@@ -37,7 +40,7 @@ function handleServicesDiscover(peripheral) {
     sensorVals.hum = hum;
     sensorVals.temp = temp;
   }
-  
+
 }
 
 function convertBytesToUint16(msb, lsb) {
@@ -45,19 +48,19 @@ function convertBytesToUint16(msb, lsb) {
 }
 
 function convertReadingToDecimal(intVal) {
-  return intVal/10;
+  return intVal / 10;
 }
 
 function convertBytesToDecimal(msb, lsb) {
   return convertReadingToDecimal(convertBytesToUint16(msb, lsb));
 }
 
-// here's a fake temperature sensor device that we'll expose to HomeKit
-let FAKE_SENSOR = {
+// here's the sensor device that we'll expose to HomeKit
+var TEMP_HUMID_SENSOR = {
   currentTemperature: 0,
   getTemperature: function () {
     console.log("Getting the current temperature!");
-    return sensorVals.temp;
+    return FAKE_SENSOR.currentTemperature;
   },
 }
 
@@ -82,13 +85,17 @@ sensor
   .on('get', function (callback) {
 
     // return our current value
-    callback(null, FAKE_SENSOR.getTemperature());
+    callback(null, TEMP_HUMID_SENSOR.getTemperature());
   });
 
-/*setInterval(function () {
+// randomize our temperature reading every 3 seconds
+setInterval(function () {
 
+  TEMP_HUMID_SENSOR.currentTemperature = sensorVals.temp;
+
+  // update the characteristic value so interested iOS devices can get notified
   sensor
     .getService(Service.TemperatureSensor)
-    .setCharacteristic(Characteristic.CurrentTemperature, FAKE_SENSOR.currentTemperature);
+    .setCharacteristic(Characteristic.CurrentTemperature, TEMP_HUMID_SENSOR.currentTemperature);
 
-}, 3000);*/
+}, 1000);
