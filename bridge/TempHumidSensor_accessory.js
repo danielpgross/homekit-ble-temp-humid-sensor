@@ -5,13 +5,20 @@ var uuid = require('../').uuid;
 
 var noble = require('noble');
 
-// Global
-let sensorVals = {
-  hum: null,
-  temp: null
-};
+var TEMP_HUMID_SENSOR = {
+  currentTemperature: 0,
+  currentHumidity: 0,
+  getTemperature: function () {
+    console.debug("Getting temperature for HomeKit");
+    return TEMP_HUMID_SENSOR.currentTemperature;
+  },
+  getHumidity: function () {
+    console.debug("Getting humidity for HomeKit");
+    return TEMP_HUMID_SENSOR.currentHumidity;
+  },
+}
 
-console.log("begin scanning...");
+console.debug("begin scanning for BLE readings...");
 
 noble.on('stateChange', (state) => {
   if (state == 'poweredOn') {
@@ -22,7 +29,7 @@ noble.on('stateChange', (state) => {
 noble.on('discover', handleServicesDiscover);
 
 function init() {
-  noble.startScanning(['0x7B18'], true);
+  noble.startScanning([], true);
 }
 
 function handleServicesDiscover(peripheral) {
@@ -30,17 +37,16 @@ function handleServicesDiscover(peripheral) {
     && peripheral.advertisement.serviceData[0]
     && peripheral.advertisement.serviceData[0].uuid == '7b18') {
 
-    let data = peripheral.advertisement.serviceData[0].data;
+    const data = peripheral.advertisement.serviceData[0].data;
 
-    let hum = convertBytesToDecimal(data[0], data[1]);
-    let temp = convertBytesToDecimal(data[2], data[3]);
+    const hum = convertBytesToDecimal(data[0], data[1]);
+    const temp = convertBytesToDecimal(data[2], data[3]);
 
-    console.log('Humidity: ' + hum + '%, Temp: ' + temp + ' deg. C');
+    console.debug('Humidity: ' + hum + '%, Temp: ' + temp + ' deg. C');
 
-    sensorVals.hum = hum;
-    sensorVals.temp = temp;
+    TEMP_HUMID_SENSOR.currentHumidity = hum;
+    TEMP_HUMID_SENSOR.currentTemperature = temp;
   }
-
 }
 
 function convertBytesToUint16(msb, lsb) {
@@ -55,47 +61,33 @@ function convertBytesToDecimal(msb, lsb) {
   return convertReadingToDecimal(convertBytesToUint16(msb, lsb));
 }
 
-// here's the sensor device that we'll expose to HomeKit
-var TEMP_HUMID_SENSOR = {
-  currentTemperature: 0,
-  getTemperature: function () {
-    console.log("Getting the current temperature!");
-    return FAKE_SENSOR.currentTemperature;
-  },
-}
+var sensorUUID = uuid.generate('hap-nodejs:accessories:temperature-humidity-sensor');
 
+var sensor = exports.accessory = new Accessory('Temperature/Humidity Sensor', sensorUUID);
 
-// Generate a consistent UUID for our Temperature Sensor Accessory that will remain the same
-// even when restarting our server. We use the `uuid.generate` helper function to create
-// a deterministic UUID based on an arbitrary "namespace" and the string "temperature-sensor".
-var sensorUUID = uuid.generate('hap-nodejs:accessories:temperature-sensor');
-
-// This is the Accessory that we'll return to HAP-NodeJS that represents our fake lock.
-var sensor = exports.accessory = new Accessory('Temperature Sensor', sensorUUID);
-
-// Add properties for publishing (in case we're using Core.js and not BridgedCore.js)
-sensor.username = "D1:5D:3A:AE:5E:FA";
+sensor.username = "D1:5D:3A:AE:5E:FB";
 sensor.pincode = "031-45-154";
 
-// Add the actual TemperatureSensor Service.
-// We can see the complete list of Services and Characteristics in `lib/gen/HomeKitTypes.js`
 sensor
   .addService(Service.TemperatureSensor)
   .getCharacteristic(Characteristic.CurrentTemperature)
   .on('get', function (callback) {
-
-    // return our current value
     callback(null, TEMP_HUMID_SENSOR.getTemperature());
   });
 
-// randomize our temperature reading every 3 seconds
+sensor
+  .addService(Service.HumiditySensor)
+  .getCharacteristic(Characteristic.CurrentRelativeHumidity)
+  .on('get', function (callback) {
+    callback(null, TEMP_HUMID_SENSOR.getHumidity());
+  });
+
 setInterval(function () {
-
-  TEMP_HUMID_SENSOR.currentTemperature = sensorVals.temp;
-
-  // update the characteristic value so interested iOS devices can get notified
   sensor
     .getService(Service.TemperatureSensor)
-    .setCharacteristic(Characteristic.CurrentTemperature, TEMP_HUMID_SENSOR.currentTemperature);
+    .setCharacteristic(Characteristic.CurrentTemperature, TEMP_HUMID_SENSOR.getTemperature());
 
-}, 1000);
+  sensor
+    .getService(Service.HumiditySensor)
+    .setCharacteristic(Characteristic.CurrentRelativeHumidity, TEMP_HUMID_SENSOR.getHumidity());
+}, 3000);
